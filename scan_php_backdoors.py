@@ -8,6 +8,8 @@ from pathlib import Path
 
 PHP_EXTS = {".php", ".phtml", ".php5", ".php7", ".inc"}
 
+IGNORE_DIRS = {"vendor"}
+
 MAGIC = {
     b"\xFF\xD8\xFF": "JPEG",
     b"\x89PNG\r\n\x1a\n": "PNG",
@@ -143,7 +145,7 @@ def scan_file(path: Path) -> dict | None:
     }
 
 def scan_dir(root: Path) -> tuple[list[dict], int]:
-    files = [p for p in root.rglob("*") if p.is_file()]
+    files = [p for p in root.rglob("*") if p.is_file() and not any(part.lower() in IGNORE_DIRS for part in p.parts)]
     total = len(files)
     results: list[dict] = []
     start = time.time()
